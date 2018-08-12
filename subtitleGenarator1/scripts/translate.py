@@ -1,5 +1,5 @@
 from googletrans import Translator
-import extractCaption
+import scripts.extractCaption as extractCaption
 
 
 class TRANSLATR_TO_TEXT():

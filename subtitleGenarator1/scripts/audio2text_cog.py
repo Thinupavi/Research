@@ -5,7 +5,7 @@ import json
 
 class Microsoft_ASR():
     def __init__(self):
-        self.sub_key = "API KEY"
+        self.sub_key = 'e5a4c32d1cce4e54b274f326a7989f14'
         self.token = None
         pass
 

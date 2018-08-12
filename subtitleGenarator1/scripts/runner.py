@@ -1,7 +1,8 @@
 import os
+import time
+import webvtt
 from audio2text_cog import Microsoft_ASR
 from translate import TRANSLATR_TO_TEXT
-from houndify_STT import HOUNDIFY_STT
 from extractCaption import Extract_Caption
 import extractWavAudio
 from audiosplit import AudioSplit
@@ -13,32 +14,35 @@ ms_asr.get_speech_token()
 TTT = TRANSLATR_TO_TEXT()
 
 url = "https://www.youtube.com/watch?v=vNOllWX-2aE"
-language = "si"
+language = "ta"
+
 # fine If any english captions available in the yputube url video
 captionTitle = Extract_Caption.extractTitle(url)
+
 # if captionTXT is not None:
 #     translate_caption_text = TRANSLATR_TO_TEXT.translateFromTXT(captionTXT, language)
-#     file_str = open("../Datas/SubtitleFile/" + captionTitle + ".srt", "w", encoding="utf-16")
+#     file_str = open("../Dyatas/SubtitleFile/" + captionTitle + ".srt", "w", encoding="utf-16")
 #     file_str.write(translate_caption_text)
 #     file_str.close()
 #
 # else:
 wavFilePath = extractWavAudio.extractWAV(url);
-#spliting the audio file in to multiple audio
-AudioSplit.split(wavFilePath)
+# spliting the audio file in to multiple audio
+AudioSplit.split(wavFilePath, captionTitle)
 
-#initiate the subtitle file path
-file_str = open("../Datas/SubtitleFile/" + captionTitle + ".srt", "w", encoding="utf-16")
+# initiate the subtitle file path
+file_str = open("../webApp/SubtitleFile/" + captionTitle + "_" + language + ".srt", "w", encoding="utf-16")
 
-#initiate slite wav file
-num_files = len(os.listdir('../Datas/Splits/'))
+# initiate slite wav file
+num_files = len(os.listdir('../Datas/Splits/' + captionTitle + '/'))
 
 cnt = 0
 start = 0
 end = 5
 for i in range(1, num_files + 1):
+
     flag = 0
-    text, confidence = ms_asr.transcribe('../Datas/Splits/' + str(i) + '.wav')
+    text, confidence = ms_asr.transcribe('../Datas/Splits/' + captionTitle + '/' + str(i) + '.wav')
     print("Text: ", text)
     print("Confidence: ", confidence)
     if text == " ":
@@ -93,8 +97,14 @@ for i in range(1, num_files + 1):
     end += 5
 
 file_str.close()
-files = glob.glob('../Datas/Splits/*')
+
+
+
+files = glob.glob('../Datas/Splits/' + captionTitle + '/*')
 for f in files:
     os.remove(f)
-os.rmdir('../Datas/Splits/')
+os.rmdir('../Datas/Splits/' + captionTitle)
+os.remove(wavFilePath)
+endTime = time.time()
+
 

@@ -6,9 +6,9 @@ from math import ceil
 
 
 class AudioSplit():
-    def split(fname):
-        if not os.path.exists('../Datas/Splits/'):
-            os.mkdir('../Datas/Splits')
+    def split(fname,captionTitle):
+        if not os.path.exists('../Datas/Splits/'+captionTitle+'/'):
+            os.mkdir('../Datas/Splits/'+captionTitle+'/')
 
         with contextlib.closing(wave.open(fname, 'r')) as f:
             frames = f.getnframes()
@@ -26,10 +26,10 @@ class AudioSplit():
             if (t1 > duration):
                 break
             newAudio2 = newAudio[t1:t2]
-            newAudio2.export('../Datas/Splits/' + str(i) + '.wav', format="wav")
+            newAudio2.export('../Datas/Splits/'+captionTitle+'/' + str(i) + '.wav', format="wav")
             t1 += 5000
             t2 += 5000
             i += 1
 
-# if __name__ == '__main__':
-#     audiosplit('../Datas/ExtractAudio/Introducing Google Gnome.wav')
+if __name__ == '__main__':
+    AudioSplit.split('https://www.youtube.com/watch?v=9No-FiEInLA','dsadsadsdasdasssdsa')

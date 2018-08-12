@@ -1,4 +1,9 @@
+import base64
+import codecs
+
 from pytube import YouTube
+
+import webvtt
 
 
 class Extract_Caption():
@@ -17,11 +22,26 @@ class Extract_Caption():
         except Exception as e:
             print(e)
 
-
     def extractTitle(url):
         yt = YouTube(url)
         captionTxt = yt.title
-        return  captionTxt
+
+        return captionTxt.replace(" ", "").replace("'", "").replace('"', '')
+
+    def getEmbedURL(url):
+        yt = YouTube(url)
+        embedURL = yt.embed_html
+        return embedURL
+
+    def download_video(url):
+        vidDownloadPath = 'C:/xampp/htdocs/SubtitleGenaretor/Videos/'
+        yt = YouTube(url)
+        title = yt.title.replace(" ", "").replace("'", "").replace('"', '')
+        audioMP4 = yt.streams.filter(file_extension='mp4').all()
+        # print(audioMP4)
+        audioMP4[0].download(vidDownloadPath, filename=title)
+        return title
+
 
 if __name__ == '__main__':
-    Extract_Caption.extractCap('https://www.youtube.com/watch?v=vNOllWX-2aE')
+    Extract_Caption.download_video('https://www.youtube.com/watch?v=9No-FiEInLA')
