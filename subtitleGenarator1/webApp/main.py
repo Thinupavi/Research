@@ -3,6 +3,8 @@ import os
 from flask import Flask, request, render_template, url_for
 import scripts.runner_vtt as runner_vtt
 import scripts.runner_vtt_from_local_file as run_local_file
+import scripts.runner_vtt_english as run_english_vtt
+import  scripts.runner_vtt_english_local as run_eng_local
 
 VTT_FILE_PATH = os.path.join('static', 'SubtitleFile')
 app = Flask(__name__)
@@ -25,6 +27,12 @@ def generateSub():
             apiLan = 'ta'
         if lang in 'Sinhala':
             apiLan = 'si'
+        if lang in 'English':
+            apiLan = 'en'
+            videoName, vttFileName = run_english_vtt.genarateSUB(url, apiLan)
+            vttFile = os.path.join(app.config['VTT_FOLDER'], vttFileName)
+            urlVid = 'http://localhost/SubtitleGenaretor/Videos/' + videoName + '.mp4'
+            return render_template('video.html', vttFile=vttFile, language=lang, urlVid=urlVid)
 
         print(lang)
         videoName, vttFileName = runner_vtt.genarateSUB(url, apiLan)
@@ -41,7 +49,6 @@ def generateSub():
 
 @app.route("/upload", methods=["POST"])
 def upload():
-
     target = 'C:/xampp/htdocs/SubtitleGenaretor/Videos/'
     print(target)
     # if not os.path.isdir(target):
@@ -64,8 +71,14 @@ def upload():
         print("Accept incoming file:", filename)
         print("Save it to:", destination)
         upload.save(destination)
-        vttFileName = run_local_file.genarateSUB(destination, str(filename).replace(" ", "").replace('.mp4', ''), lang)
 
+        if lang in 'English':
+            vttFileName = run_eng_local.genarateSUB(destination, str(filename).replace(" ", "").replace('.mp4', ''),lang)
+            vttFile = os.path.join(app.config['VTT_FOLDER'], vttFileName)
+            urlVid = 'http://localhost/SubtitleGenaretor/Videos/' + str(filename).replace(" ", "")
+            return render_template('video.html', vttFile=vttFile, language=lang, urlVid=urlVid)
+
+        vttFileName = run_local_file.genarateSUB(destination, str(filename).replace(" ", "").replace('.mp4', ''), lang)
         vttFile = os.path.join(app.config['VTT_FOLDER'], vttFileName)
         urlVid = 'http://localhost/SubtitleGenaretor/Videos/' + str(filename).replace(" ", "")
 
